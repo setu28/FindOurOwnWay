@@ -49,7 +49,7 @@ app.use("/api/v2/auth", userRoutes);
 app.get('/', (req, res) => {
 	return res.status(200).json({
 		success: true,
-		message: "Server is up and running",
+		message: "Server is up and running from our end",
 	})
 });
 
