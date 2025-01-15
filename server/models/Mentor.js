@@ -20,9 +20,16 @@ const mentorSchema = new mongoose.Schema(
         },
         gender: {
             type:String,
-
         },
         phoneNumber: {
+            type: Number,
+            required: true,
+        },
+        age: {
+            type: Number,
+            required: true,
+        },
+        experience: {
             type: Number,
             required: true,
         },

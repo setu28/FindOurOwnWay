@@ -3,28 +3,23 @@ const router = express.Router()
 
 //Import the required controllers and middleswares
 const {
-    login,
-    loginPandit,
-    loginCustomer,
     signup,
+    signupMentor,
+    signupStudent,
+    login,
     sendotp,
-    changepassword,
     verifyotp,
 } = require("../controllers/Auth")
 
-
-
-
+const {
+    createAdressRecordForUser,
+} = require("../controllers/Address")
 
 const {
     resetPasswordToken,
-    resetPassoword
 } = require("../controllers/ResetPassword")
 
-
-
 const { auth } = require("../middlewares/auth")
-
 
 //Routes for login,signup and Authentication
 
@@ -35,10 +30,16 @@ const { auth } = require("../middlewares/auth")
 //Routes for user login
 
 
-//Routes for user signup
-router.post("/signup",signup);
+//Routes for users signup
+router.post("/signup/user",signup);
+router.post("/signup/student",signupStudent);
+router.post("/signup/mentor",signupMentor);
 
 //Route for Address record creation during signup
+router.post("/signup/address",createAdressRecordForUser);
+
+//Route for Logging in
+router.post("/login",login);
 
 
 

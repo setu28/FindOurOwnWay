@@ -7,10 +7,10 @@ export const endpoints = {
     LOGINAdmin_API : BASE_URL + "/auth/login/admin",
     SENDOTP_API : BASE_URL + "/auth/sendotp",
     VERIFYOTP_API : BASE_URL + "/auth/verify-otp",
-    USER_CREATION_API : BASE_URL + "/auth/signup",
-    PANDIT_CREATION_API : BASE_URL + "/auth/signup/pandit",
+    User_Creation_API : BASE_URL + "/auth/signup/user",
+    Student_Creation_API : BASE_URL + "/auth/signup/student",
     CUSTOMER_CREATION_API : BASE_URL + "/auth/signup/customer",
-    ADDRESS_CREATION_API : BASE_URL + "/auth/signup/address", 
+    Address_Creation_API : BASE_URL + "/auth/signup/address", 
     UpdatePujaNameDetailsToPanditProfile_API : BASE_URL + "/auth/signup/pandit/updatePujaNames",
 }
 
