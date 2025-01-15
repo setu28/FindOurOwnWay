@@ -27,6 +27,7 @@ const porfileSlice = createSlice({
             state.accType = value.payload;
         },
         setUserId(state,value){
+            console.log("We are setting user id",value.payload);
             state.userId = value.payload;
         },
         setPanditId(state,value){

@@ -1,165 +1,118 @@
 import React from 'react';
-import { useState } from 'react';
-import { ACCOUNT_TYPE } from '../../../utils/constants';
-import { useDispatch, useSelector } from 'react-redux';
+import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { UseSelector } from 'react-redux';
-import Tab from '../../common/Tab';
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai"
-
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { createAddress } from '../../../services/operations/authAPI';
 const AddressForm = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { userId }  = useSelector((state) => state.profile);
+  const {
+        register,
+        handleSubmit,
+        formState: { errors },
+      } = useForm();
+      const onSubmit = (data) => {
+        console.log("We are inside submit function",userId);
+        dispatch(createAddress(data.AddressLine1,data.AddressLine2,data.City,data.State,data.Pincode,userId,navigate));
 
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const [formData, setFormData] = useState({
-        addressLine1: "",
-        addressLine2: "",
-        place: "",
-        city: "",
-        state: "",
-        pincode: "",
-    });
-    const {addressLine1, addressLine2, place, city, state, pincode} = formData;
-
-    const handleOnChange = (e) =>{
-        setFormData((prevData) => ({
-            ...prevData,
-            [e.target.name] : e.target.value,
-        }))
-    }
+      }
     
     return (
-        <div className="flex w-full flex-col items-center">
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="flex w-full flex-row gap-y-1 justify-items-center">
-            <div className="flex flex-col">
-              <div className="flex flex-row justify-center">
-              <label className="flex gap-y-3 gap-x-3">
-                  <p className="mb-1 text-[0.875rem] leading-[1.375rem] text-richblack-5">
-                    Address Line 1 
-                  </p>
-                  <input
-                    required
-                    type="text"
-                    name="addressLine1"
-                    value={addressLine1}
-                    onChange={handleOnChange}
-                    placeholder="Enter Your Address Line1"
-                    style={{
-                        boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
-                    }}
-                    className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5  gap-y-10"
-                  />
-              </label>
-              <label className="flex gap-y-3 gap-x-3">
-                  <p className="mb-1 text-[0.875rem] leading-[1.375rem] text-richblack-5">
-                    Address Line 2 
-                  </p>
-                  <input
-                    required
-                    type="text"
-                    name="addressLine2"
-                    value={addressLine2}
-                    onChange={handleOnChange}
-                    placeholder="Enter middle name"
-                    style={{
-                        boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
-                    }}
-                    className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
-                  />
-              </label>
-              <label className="flex gap-y-3 gap-x-3">
-                  <p className="mb-1 text-[0.875rem] leading-[1.375rem] text-richblack-5">
-                    Place 
-                  </p>
-                  <input
-                    required
-                    type="text"
-                    name="place"
-                    value={place}
-                    onChange={handleOnChange}
-                    placeholder="Enter last name"
-                    style={{
-                        boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
-                    }}
-                    className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
-                  />
-              </label>
-              <label className="flex gap-y-4 gap-x-3">
-                  <p className="mb-1 text-[0.875rem] leading-[1.375rem] text-richblack-5">
-                    City 
-                  </p>
-                  <input
-                    required
-                    type="text"
-                    name="city"
-                    value={city}
-                    onChange={handleOnChange}
-                    placeholder="Enter Gender"
-                    style={{
-                        boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
-                    }}
-                    className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
-                  />
-              </label>
-    
-              </div>
-               
-              <div className="flex flex-row justify-center pt-12">
-              <label className="flex gap-y-3 gap-x-3">
-                  <p className="mb-1 text-[0.875rem] leading-[1.375rem] text-richblack-5">
-                    State 
-                  </p>
-                  <input
-                    required
-                    type="text"
-                    name="state"
-                    value={state}
-                    onChange={handleOnChange}
-                    placeholder="Enter Phone Number"
-                    style={{
-                        boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
-                    }}
-                    className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
-                  />
-              </label>
-              <label className="flex gap-y-3 gap-x-3">
-                  <p className="mb-1 text-[0.875rem] leading-[1.375rem] text-richblack-5">
-                    Pin Code 
-                  </p>
-                  <input
-                    required
-                    type="Number"
-                    name="pincode"
-                    value={pincode}
-                    onChange={handleOnChange}
-                    placeholder=""
-                    style={{
-                        boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
-                    }}
-                    className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
-                  />
-              </label>
-             
-              </div>
-    
-             <div className="flex flex-col px-60">
-             <button
-              type="submit"
-              className="mt-6 rounded-[8px] bg-yellow-50 py-[8px] px-[12px] font-medium text-richblack-900"
-            >
-              Create Account
-            </button>
-    
-             </div>
-             
-             
-            </div>
-           
-          </form>
-    
-          
-        </div>
+      <div className="flex w-full flex-col items-center">
+      {/* Form */}
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="w-full max-w-sm space-y-4">
+          {/* Fist Name */}
+          <div>
+          <label className="block text-gray-700">AddressLine 1</label>
+          <input
+            {...register("AddressLine1", {
+              required: "First Name is required",
+              maxLength: {
+                value: 10,
+                message: "Address Line 1 cannot exceed 10 characters",
+              },
+            })}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white text-black"
+          />
+          {errors.AddressLine1 && (
+            <p className="text-red-500 text-sm">{errors.AddressLine1.message}</p>
+          )}
+          </div>
+
+          {/* Last Name */}
+          <div>
+          <label className="block text-gray-700">AddressLine 2</label>
+          <input
+            {...register("AddressLine2", {
+              required: "Adress Line 2 is required",
+              maxLength: {
+                value: 10,
+                message: "Address Line 2 cannot exceed 10 characters",
+              },
+            })}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white text-black"
+          />
+          {errors.AddressLine2 && (
+            <p className="text-red-500 text-sm">{errors.AddressLine2.message}</p>
+          )}
+          </div>
+
+          {/* City*/}
+          <div>
+          <label className="block text-gray-700">City</label>
+          <select
+            {...register("City")}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white text-black"
+          >
+            <option value="A">Category A</option>
+            <option value="B">Category B</option>
+          </select>
+          </div>
+
+          {/* State */}
+          <div>
+          <label className="block text-gray-700">State</label>
+          <select
+            {...register("State")}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white text-black"
+          >
+            <option value="A">Category A</option>
+            <option value="B">Category B</option>
+          </select>
+          </div>
+
+          {/* Pincode */}
+          <div>
+          <label className="block text-gray-700">Pincode</label>
+          <input
+            type="Pincode"
+            {...register("Pincode", {
+              min: {
+                value: 5,
+                message: "Pincode must be at least 5",
+              },
+            })}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white text-black"
+          />
+          {errors.Pincode && (
+            <p className="text-red-500 text-sm">{errors.Pincode.message}</p>
+          )}
+          </div>
+
+          {/* Submit */}
+         
+          <div>
+          <input
+            type="submit"
+            className="mt-1 block w-full px-3 py-2 bg-black text-white rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          />
+          </div>
+      </form>
+    </div>
       )
 }
 

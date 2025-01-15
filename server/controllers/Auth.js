@@ -1,5 +1,7 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
+const Mentor = require("../models/Mentor");
+const Student = require("../models/Student");
 
 const OTP = require("../models/OTP");
 
@@ -13,118 +15,137 @@ require("dotenv").config();
 
 
 exports.signup = async (req,res) =>{
+    try {
+        console.log("We are inside signup");
+        const{
+            password,
+            confirmPassword,
+        }=req.body;
+        const { email } = req.body.email;
+        if(!email || !password || !confirmPassword){
+            return res.status(400).json({
+                success:false,
+                message: "Please fill all the required fields",
+            });
+        }
+        if(password !== confirmPassword){
+            return res.status(400).json({
+                success:false,
+                message: "Passwords do not match",
+            });
+        }
+        /*
+        const existingUser = await User.findOne({email});
+        if(!existingUser){
+            return res.status(400).json({
+                success:false,
+                message: "User already exists",
+            });
+        }
+            */
+        //Hash the password
+        const hashedPassword = await bcrypt.hash(password,10);
 
-    try{
+        //Create a new user
+        const newUser = await User.create({
+            email: email,
+            password: hashedPassword,
+        });
+        return res.status(200).json({
+            success:true,
+            message: "User created",
+            newUser,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success:false,  
+            message: "Unable to create user",
+            error: error.message,
+        });
+    }
+};
 
-        const {
+exports.signupMentor = async (req,res) =>{
+    try {
+        const{
             firstName,
             lastName,
             middleName,
             gender,
             phoneNumber,
-            password,
-            confirmPassword,
-            otp,
-            isAdmin,
-            secretKey,
-            
-        }= req.body;
-        
-        const email = req.body.email.email;
-
-        //Checking if all details are present or not
-        if( !firstName || !lastName || !phoneNumber || !email || !password || !confirmPassword){
-            console.log("coming inside this if");
-            return res.status(403).send({
-                success: false,
-                message: "All fields are required",
+            dateOfBirth,
+            experience,
+        }=req.body;
+        if(!firstName || !lastName || !middleName || !gender || !phoneNumber || !dateOfBirth || !experience){
+            return res.status(400).json({
+                success:false,
+                message: "Please fill all the required fields",
             });
         }
-        
-        //Checking if passoword and confirmed password match
-        if(password != confirmPassword){
-            return res.status(400).send({
-                success: false,
-                message: "Passowrd and confirmed password does not match",
-            });
-        }
-        console.log(email);
-
-        //Checking if the user already exists
-        const existingUser = await User.findOne({email});
-        if(existingUser){
-            return res.status(400).send({
-                success: false,
-                message: "User already present",
-            });
-        }
-        /*
-        //Finding the most recent OTP for the email
-        //const response = OTP.find({email}).sort({ createdAt: -1}).limit(1);
-        const response = await OTP.find({ email }).sort({ createdAt: -1 }).limit(1);
-        //console.log(response1);
-
-        
-        if(response.length == 0){
-            //If OTP not found
-            return res.status(400).send({
-                success: false,
-                message: "OTP not found",
-            });
-        }
-        else if(otp!= response[0].otp){
-            //OTP does not match
-            return res.status(400).send({
-                success: false,
-                message: "OTP does not match",
-            });
-        }
-        */
-
-        // Hash the password
-		const hashedPassword = await bcrypt.hash(password, 10);
-
-        //Creating a User
-        
-        const newUser = await User.create({
+        const newMentor = await Mentor.create({
             firstName: firstName,
             lastName: lastName,
             middleName: middleName,
-            gender: gender,
+            gender: gender, 
             phoneNumber: phoneNumber,
-            email: email,
-            password: hashedPassword,
+            experience: experience,
+            dateOfBirth: dateOfBirth,
         });
-        
-
-        if(secretKey){
-            const adminDetails = await Admin.create({
-                secretKey: secretKey,
-                user: newUser._id
-            });
-            console.log("admin conisdered");
-            await User.findByIdAndUpdate(newUser._id,
-            {isAdmin: true,});
-            return res.status(200).json({
-                success: true,
-                newUser,
-                adminDetails,
-                message: "Admin registered",
-            })
-        }
-        
-
         return res.status(200).json({
-            success: true,
-            newUser,
-            message: "User registered Successfully",
+            success:true,
+            newMentor,
+            message: "Mentor created",
         });
-    }
-    catch(error){
-        console.log(error);
+    } catch (error) {
         return res.status(500).json({
-            success: false,
-            message: "User cannot be registered. Please try again later",
+            success:false,
+            message: "Unable to create Mentor",
+            error: error.message,
+        });
+        
+    }
+};
+
+exports.signupStudent = async (req,res) =>{
+    try {
+        console.log("We are insde Student Making Controller");
+        const{
+            firstName,lastName,
+            gender,age,email
+        }=req.body;
+        if(!firstName || !lastName || !gender || !age){
+            return res.status(400).json({
+                success:false,
+                message: "Please fill all the required fields",
+            });
+        }
+        const newStudent = await Student.create({
+            firstName: firstName,
+            lastName: lastName,
+            gender: gender,
+        });
+
+        //Update User Details
+        const userDetails = await User.findOne({email});
+        const updatedUserDetails = await User.findByIdAndUpdate((userDetails._id),{
+            accountType: "Student",
+        });
+        if(!updatedUserDetails){
+            return res.status(500).json({
+                success:false,
+                message: "Unable to update User",
+            });
+        }
+        return res.status(200).json({
+            success:true,
+            newStudent,
+            updatedUserDetails,
+            message: "Student created",
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message: "Unable to create Student",
             error: error.message,
         });
     }
@@ -132,9 +153,11 @@ exports.signup = async (req,res) =>{
 
 
 
-//LogIn Controller for authenticating user Whether he is admin or not
+//LogIn Controller
 exports.login = async(req,res)=>{
+    
     try{
+        
         //Get email and password from email body
         const { email, password} = req.body;
         
@@ -149,12 +172,11 @@ exports.login = async(req,res)=>{
 
         //Find user with provided email
         const user = await User.findOne({email});
-        const adminId = user._id;
 
-        const admin = await Admin.findOne({user: adminId});
+        
 
         //If user not found
-        if(!user || !admin || !user.isAdmin){
+        if(!user){
             return res.status(400).json({
                 success:false,
                 message: "Details Not Found"
@@ -164,7 +186,7 @@ exports.login = async(req,res)=>{
         // Generate JWT token and Compare Password
         if(await bcrypt.compare(password, user.password)){
             const token = jwt.sign(
-				{ email: user.email, id: admin._id},
+				{ email: user.email, id: user._id, accountType: user.accountType},
 				process.env.JWT_SECRET,
 				{
 					expiresIn: "24h",
@@ -200,6 +222,7 @@ exports.login = async(req,res)=>{
             message: "Unable to log in , Please try again Later",
         });
     }
+        
 };
 
 
@@ -294,6 +317,7 @@ exports.verifyotp = async(req,res)=>{
 
 //Controller for changing password
 exports.changePassword = async(req,res)=>{
+    /*
     try{
         //Get data from user
         const userDetails = await User.findById(req.user.id);
@@ -364,4 +388,19 @@ exports.changePassword = async(req,res)=>{
             error: error.message,
         });
     }
+        */
 };
+
+/*
+export function logout(navigate) {
+  return (dispatch) => {
+    dispatch(setToken(null))
+    dispatch(setUser(null))
+    dispatch(resetCart())
+    localStorage.removeItem("token")
+    localStorage.removeItem("user")
+    toast.success("Logged Out")
+    navigate("/")
+  }
+}
+*/

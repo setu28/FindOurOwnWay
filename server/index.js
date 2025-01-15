@@ -34,11 +34,14 @@ app.use(
 
 
 //Routes Before User is Logged In
-app.use("/api/v2");
+//app.use("/api/v2/",userRoutes);
+
+//Routes for Signuping
+app.use("/api/v2/auth", userRoutes);
 
 
 //Routes After User is Logged In
-app.use("/api/v2/auth", userRoutes);
+//app.use("/api/v2/auth", userRoutes);
 
 
 

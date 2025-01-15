@@ -14,10 +14,10 @@ const {
     LOGINAdmin_API,
     SENDOTP_API,
     VERIFYOTP_API,
-    USER_CREATION_API,
-    PANDIT_CREATION_API,
+    User_Creation_API,
+    Student_Creation_API,
     CUSTOMER_CREATION_API,
-    ADDRESS_CREATION_API,
+    Address_Creation_API,
 } = endpoints
 
 export function login(email, password, accountType,navigate){
@@ -125,7 +125,7 @@ export function verifyotp(otp,email,navigate){
             }
             toast.success("OTP verified");
             dispatch(setLoading(false));
-            navigate("/signup");
+            navigate("/signupForm");
         } catch (error) {
             console.log("Error",error);
             toast.error("OTP ERROR");
@@ -134,17 +134,14 @@ export function verifyotp(otp,email,navigate){
     }
 }
 
-export function createUser(accountType,firstName, middleName,lastName,
-gender, phoneNumber, email, password, confirmPassword,
-navigate){
+export function createUser(email, password, confirmPassword,navigate){
     return async (dispatch) =>{
         const toastId = toast.loading("...Loading");
         dispatch(setLoading(true));
         try {
-            const response = await apiConnector("POST", USER_CREATION_API,{
-                firstName, middleName,lastName,
-                gender, phoneNumber, email, 
-                password, confirmPassword,
+            console.log("inside user creation",email);
+            const response = await apiConnector("POST", User_Creation_API,{
+                email, password, confirmPassword,
             });
             console.log("Create User API response",response);
             if(!response.data.success){
@@ -154,16 +151,7 @@ navigate){
             console.log("We are in auth API");
             console.log(response.data.newUser._id);
             dispatch(setUserId(response.data.newUser._id));
-
-            if(accountType == "Pandit"){
-                dispatch(setAccType({accountType}));
-                navigate("/signup/pandit");
-            }
-            else{
-                dispatch(setAccType({accountType}));
-                navigate("/signup/customer");
-            }
-            
+            navigate("/signupForm");
         } catch (error) {
             console.log("Create User Erro",error);
             toast.error("User not created");
@@ -174,30 +162,30 @@ navigate){
     }
 }
 
-export function createPandit(educationalBackground,
-languages,
-experience,
-about,userId,myValue,navigate){
+export function createStudent(firstName,lastName,gender,age,email,navigate){
     return async (dispatch) => {
         const toastId = toast.loading("...Loading");
-        console.log("We are in creating Pandit");
+        console.log("We are in creating Pandit",firstName);
         dispatch(setLoading(true));
+        
         try {
-            const response = await apiConnector("POST", PANDIT_CREATION_API,{
-                educationalBackground, languages,
-                experience,about,userId,myValue
+            const response = await apiConnector("POST", Student_Creation_API,{
+                firstName,lastName,
+                gender,age,email,
             });
             console.log("Create Pandit Response",response);
+
             if(!response.data.success){
                 throw new Error(response.data.message);
             }
-            toast.success("Pandit Record creation done",response);
-            dispatch(setPanditId(response.data.pandit._id));
-            navigate("/signup/pandit/updateDetails");
+            toast.success("Student record created",response);
+            //dispatch(setPanditId(response.data.pandit._id));
+            navigate("/signup/addressDetails");
         } catch (error) {
-            console.log("Create Pandit Error",error);
-            toast.error("Pandit cannot be created");
+            console.log("Student cannot be created",error);
+            toast.error("Student cannot be created");
         }
+            
         dispatch(setLoading(false));
         toast.dismiss(toastId);
     }
@@ -228,14 +216,14 @@ export function createCustomer(navigate,userId){
     }
 }
 
-export function createAddress(addressLine1, addressLine2,place,
-city,state,pincode,userId,navigate){
+export function createAddress(addressLine1, addressLine2,city,state,pincode,userId,navigate){
     return async(dispatch) =>{
         const toastId = toast.loading("...Loading");
         dispatch(setLoading(true));
         try {
-            const response = await apiConnector("POST", ADDRESS_CREATION_API,{
-                addressLine1, addressLine2,place,
+            console.log("Inside create address",userId);
+            const response = await apiConnector("POST", Address_Creation_API,{
+                addressLine1, addressLine2,
                 city,state,pincode,userId
             });
             console.log("Create Address Record response",response);
@@ -243,12 +231,14 @@ city,state,pincode,userId,navigate){
                 throw new Error(response.data.message);
             }
             toast.success("Address record created, Please log in Again");
+            /*
             dispatch(setAccType(null))
             dispatch(setUser(null))
             dispatch(setEmail(null))
             dispatch(setUserId(null))
             dispatch(setPanditId(null))
-            navigate("/signup");
+            */
+            navigate("/");
         } catch (error) {
             console.log("Create Address Error",error);
             toast.error("Address record not created");
