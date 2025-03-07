@@ -5,6 +5,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const database = require("./config/database");
 const userRoutes = require("./routes/User");
+const roadMapSubjectRoutes = require("./routes/RoadMapSubject");
 
 dotenv.config();
 const PORT = process.env.PORT || 8000;
@@ -38,7 +39,7 @@ app.use(
 
 //Routes for Signuping
 app.use("/api/v2/auth", userRoutes);
-
+app.use("/api/v2/roadMapSubject", roadMapSubjectRoutes);
 
 //Routes After User is Logged In
 //app.use("/api/v2/auth", userRoutes);

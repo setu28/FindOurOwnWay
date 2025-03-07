@@ -14,6 +14,27 @@ export const endpoints = {
     UpdatePujaNameDetailsToPanditProfile_API : BASE_URL + "/auth/signup/pandit/updatePujaNames",
 }
 
+export const roadMapSubjectEndpoints = {
+    RoadMapSubject_Creation_API : BASE_URL + "/roadMapSubject/createRoadMapSubject",
+    RoadMapSubjectSubTopic_Creation_API : BASE_URL + "/roadMapSubject/createRoadMapSubTopic",
+    RoadMapSubjectRelatedTopic_Creation_API : BASE_URL + "/roadMapSubject/createRoadMapRelatedTopic",
+    RoadMapSubjectTopic_Creation_API: BASE_URL + "/roadMapSubject/createRoadMapTopic",
+    RoadMapSubjectTopicNickName_Creation_API: BASE_URL + "/roadMapSubject/createRoadMapTopicNickName",
+    RoadMapSubjectTopic_Publish_API: BASE_URL + "/roadMapSubject/PublishRoadMap",
+}
+
+export const updateRoadMapSubjectEndpoints = {
+    UpdateRoadMapSubject_Creation_API : BASE_URL + "/roadMapSubject/updateRoadMapSubject",
+    UpdateRoadMapSubjectSubTopic_Creation_API : BASE_URL + "/roadMapSubject/updateRoadMapSubTopic",
+    UpdateRoadMapSubjectRelatedTopic_Creation_API : BASE_URL + "/roadMapSubject/updateRoadMapRelatedTopic",
+    UpdateRoadMapSubjectTopic_Creation_API : BASE_URL + "/roadMapSubject/updateRoadMapTopic",
+}
+
+export const getroadMapSubjectDetails = {
+    GETRoadMapSubjectTopic_ALLPUBLISHED_API : BASE_URL + "/roadMapSubject/getAllPublishedRoadMaps",
+}
+
+
 export const panditendpoints = {
     GETALLPANDITS_API : BASE_URL + "/view/findingPanditPage",
     GETPANDITRECORD_API : BASE_URL + "/view/panditRecord",
