@@ -5,10 +5,24 @@ const mongoose = require("mongoose");
 const subTopicSchema = new mongoose.Schema(
     {
         name: {
-            type: [String],
-            required : true,
+            type: String,
+            
             trim: true,
         },
+        status:{
+            type: Boolean,
+            
+        },
+        notesLink:{
+            type: String,
+        },
+        YoutubeLink:{
+            type: String,
+        },
+        relatedTopicAssociated: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "RelatedTopic",  
+        }],
         topicsAssociated: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: "Topic",  

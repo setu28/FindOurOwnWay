@@ -11,8 +11,22 @@ const RoadmapSubjectSchema = new mongoose.Schema(
         },
         url: {
             type: String,
-            required : true,
             trim: true,   
+        },
+        subjectName:{
+            type: String,
+            required : true,
+        },
+        published:{
+            type: Boolean,
+            default: false,
+        },
+        duration: {
+            type: String,
+            required : true,
+        },
+        nickName: {
+            type: String,
         },
         mentorAssociated: {
             type: mongoose.Schema.Types.ObjectId,
