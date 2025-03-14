@@ -6,49 +6,74 @@ const Tags = require("../models/Tags");
 
 exports.createRoadMapSubject = async (req, res) => {
     try {
-        const{
+        const {
             Name,
             url,
             RoadmapSubjectValue,
             Duration,
+            courseTags,
             mentorAssociated,
             studentsAssociated,
             studentsLiked,
             topicsAssociated,
-            tagsAssociated,
             SamplePapersAssociated,
-        }=req.body.data;
-        console.log("We are here inzide createRoadMap subject",Name);
-
-        if(!Name || !RoadmapSubjectValue || !Duration){
-            
-            return res.status(500).json({
+        } = req.body.data;
+    
+        console.log("We are here inside createRoadMap subject", Name);
+        
+        if (!Name || !RoadmapSubjectValue || !Duration || !courseTags) {
+            return res.status(400).json({
                 success: false,
                 message: "Please fill all the required information",
             });
         }
-        
-
+    
+        // Process tags concurrently
+        const tagsAssociated = await Promise.all(
+            courseTags.map(async (tagName) => {
+                const existingTag = await Tags.findOne({ name: tagName });
+                if (!existingTag) {
+                    const newTag = await Tags.create({ name: tagName });
+                    return newTag._id;
+                }
+                return existingTag._id;
+            })
+        );
+    
+        // Create the Roadmap Subject
         const roadMapSubject = await RoadmapSubject.create({
             name: Name,
             subjectName: RoadmapSubjectValue,
             duration: Duration,
         });
+    
         console.log(roadMapSubject);
-
+    
+        // Update tags in the background
+        setImmediate(async () => {
+            try {
+                await RoadmapSubject.findByIdAndUpdate(roadMapSubject._id, {
+                    tagsAssociated: tagsAssociated,
+                });
+            } catch (updateError) {
+                console.error("Error updating RoadmapSubject tags:", updateError);
+            }
+        });
+    
         return res.status(200).json({
             success: true,
             message: "RoadMap Subject record created successfully",
             roadMapSubject,
         });
     } catch (error) {
-        console.log("We are here inzide error",error);
+        console.log("We are here inside error", error);
         return res.status(500).json({
             success: false,
             message: "Unable to create RoadMap Subject record",
             error: error.message,
         });
     }
+    
 };
 
 

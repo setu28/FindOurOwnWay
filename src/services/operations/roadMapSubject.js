@@ -141,8 +141,8 @@ export const getALLPublishedRoadMap = async() =>{
             throw new Error(response.data.message);
         }
         toast.success("Able to Retrieve Data");
-        console.log("inside create Roadmap",response);
-        result=response?.data.roadMapSubject;
+        console.log("Inside getAllPublished RoadMap",response);
+        result=response?.data.allPublishedRoadMapData;
     } catch (error) {
         toast.error(error.message);
     }
